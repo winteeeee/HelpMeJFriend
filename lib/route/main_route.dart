@@ -13,7 +13,7 @@ class MainRoute extends StatelessWidget {
 
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: Colors.white24,
+        backgroundColor: Colors.grey,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

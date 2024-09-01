@@ -1,8 +1,7 @@
 abstract class Entity {
-  int id;
+  int? id;
 
   Entity(this.id);
 
-  String getTableName();
   Map<String, dynamic> toMap();
 }

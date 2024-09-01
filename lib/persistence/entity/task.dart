@@ -8,17 +8,12 @@ class Task extends Entity {
   int positionId;
 
   Task({
-    required id,
+    id,
     required this.name,
     required this.startTime,
     required this.endTime,
     required this.positionId
   }) : super(id);
-
-  @override
-  String getTableName() {
-    return "task";
-  }
 
   @override
   Map<String, dynamic> toMap() {

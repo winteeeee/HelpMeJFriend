@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../persistence/entity/plan.dart';
+import '../persistence/entity/position.dart';
+import 'package:help_me_j_friend/persistence/repository/plan_repository.dart';
+import 'package:help_me_j_friend/persistence/repository/position_repository.dart';
+import 'package:help_me_j_friend/route/position_select_route.dart';
 import 'package:help_me_j_friend/style/button_style.dart';
 import 'package:help_me_j_friend/style/text_style.dart';
 import 'package:help_me_j_friend/widget/date_input_widget.dart';
+import 'package:help_me_j_friend/widget/dialog.dart';
 import 'package:help_me_j_friend/widget/text_input_widget.dart';
-import 'package:help_me_j_friend/widget/time_input_widget.dart';
 
 class PlanCreateRoute extends StatefulWidget {
   const PlanCreateRoute({super.key});
@@ -13,11 +19,18 @@ class PlanCreateRoute extends StatefulWidget {
 }
 
 class _PlanCreateState extends State<PlanCreateRoute> {
+  //[Position]
+  String positionName = "";
+  LatLng pos = const LatLng(37.7749, -122.4194);
+
+  //[Plan]
   String planName = "";
   DateTime planStartDate = DateTime.now();
   DateTime planEndDate = DateTime.now();
-  TimeOfDay planActivityStartTime = const TimeOfDay(hour: 0, minute: 0);
-  TimeOfDay planActivityEndTime = const TimeOfDay(hour: 0, minute: 0);
+
+  //[Repository]
+  PositionRepository positionRepository = PositionRepository();
+  PlanRepository planRepository = PlanRepository();
 
   void setPlanName(text) {
     setState(() {
@@ -37,15 +50,15 @@ class _PlanCreateState extends State<PlanCreateRoute> {
     });
   }
 
-  void setPlanActivityStartTime(time) {
+  void setPositionName(name) {
     setState(() {
-      planActivityStartTime = time;
+      positionName = name;
     });
   }
 
-  void setPlanActivityEndTime(time) {
+  void setPos(position) {
     setState(() {
-      planActivityEndTime = time;
+      pos = position;
     });
   }
 
@@ -56,7 +69,7 @@ class _PlanCreateState extends State<PlanCreateRoute> {
 
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: Colors.white24,
+        backgroundColor: Colors.grey,
         body: Center(child: Column(
           children: [
             SizedBox(height: screenHeight * 0.1),
@@ -68,20 +81,42 @@ class _PlanCreateState extends State<PlanCreateRoute> {
             SizedBox(height: screenHeight * 0.03),
             DateInputWidget(name: "일정 종료 날짜", width: screenWidth * 0.8, date: planEndDate, setState: setPlanEndDate),
             SizedBox(height: screenHeight * 0.03),
-            TimeInputWidget(name: "활동 시작 날짜", width: screenWidth * 0.8, time: planActivityStartTime, setState: setPlanActivityStartTime),
+            TextInputWidget(name: "숙소 이름", width: screenWidth * 0.8, setState: setPositionName),
             SizedBox(height: screenHeight * 0.03),
-            TimeInputWidget(name: "활동 종료 날짜", width: screenWidth * 0.8, time: planActivityEndTime, setState: setPlanActivityEndTime),
-            SizedBox(height: screenHeight * 0.03),
-            //TODO 구글맵과 연동하여 숙소 위치 뽑아오기
-            const Text("TODO 숙소 위치"),
+            ElevatedButton(onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => PositionSelectRoute(
+                  pos: pos,
+                  setState: setPos)));
+            }, child: const Text("숙소 선택 하기")),
             SizedBox(height: screenHeight * 0.1),
             SizedBox(
               width: screenWidth * 0.8,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ElevatedButton(onPressed: () {
-                    //TODO 구현. 시작 날짜가 종료 날짜보다 앞에 있는지 체크
+                  ElevatedButton(onPressed: () async {
+                    if (planEndDate.isBefore(planStartDate)) {
+                      DialogFactory.showAlertDialog(context, "시작 날짜는 종료 날짜보다 앞에 있어야 합니다.");
+                    } else {
+                      int accommodationPositionId = await positionRepository.insert(
+                          Position(
+                              name: positionName,
+                              latitude: pos.latitude,
+                              longitude: pos.longitude
+                          )
+                      );
+
+                      await planRepository.insert(Plan(
+                          name: planName,
+                          startDate: planStartDate,
+                          endDate: planEndDate,
+                          accommodationPositionId: accommodationPositionId)
+                      );
+
+                      if (context.mounted) {
+                        DialogFactory.showBackDialog(context, "일정이 생성되었습니다.");
+                      }
+                    }
                   }, style: JFriendButtonStyle.subElevatedButtonStyle, child: const Text("생성")),
                   ElevatedButton(onPressed: () {
                     Navigator.pop(context);

@@ -1,6 +1,6 @@
 import 'package:help_me_j_friend/persistence/entity/entity.dart';
-import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 abstract class Repository<T extends Entity> {
   static Database? _database;
@@ -10,19 +10,17 @@ abstract class Repository<T extends Entity> {
       return _database!;
     }
 
-    _database = await initDatabase();
+    _database = await _initDatabase();
     return _database!;
   }
 
-  Future<Database> initDatabase() async {
-    String path = join(await getDatabasesPath(), 'jfriend.db');
-
+  Future<Database> _initDatabase() async {
     return await openDatabase(
-        path,
+        'jfriend.db',
         version: 1,
         onCreate: (db, version) async {
           await db.execute('''
-          CREATE TABLE position (
+          CREATE TABLE Position (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               name TEXT NOT NULL,
               latitude REAL NOT NULL,
@@ -31,7 +29,7 @@ abstract class Repository<T extends Entity> {
           ''');
 
           await db.execute('''
-          CREATE TABLE task (
+          CREATE TABLE Task (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               name TEXT NOT NULL,
               start_time TEXT NOT NULL,
@@ -44,14 +42,12 @@ abstract class Repository<T extends Entity> {
           ''');
 
           await db.execute('''
-          CREATE TABLE plan (
+          CREATE TABLE Plan (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               name TEXT NOT NULL,
               start_date TEXT NOT NULL,
               end_date TEXT NOT NULL,
-              accommodation_position_id INTEGER NOT NULL,
-              plan_activity_start_time TEXT NOT NULL,
-              plan_activity_end_time TEXT NOT NULL,
+              accommodation_position_id INTEGER NOT NULL
               FOREIGN KEY (accommodation_position_id) REFERENCES position(id)
           )
           ''');
@@ -61,17 +57,17 @@ abstract class Repository<T extends Entity> {
   
   Future<int> insert(T t) async {
     Database db = await database;
-    return await db.insert(t.getTableName(), t.toMap());
+    return await db.insert(T.toString(), t.toMap());
   }
 
   Future<void> update(T t) async {
     Database db = await database;
-    await db.update(t.getTableName(), t.toMap(), where: 'id = ?', whereArgs: [t.id]);
+    await db.update(T.toString(), t.toMap(), where: 'id = ?', whereArgs: [t.id]);
   }
 
   Future<void> delete(T t) async {
     Database db = await database;
-    await db.delete(t.getTableName(), where: "id = ?", whereArgs: [t.id]);
+    await db.delete(T.toString(), where: "id = ?", whereArgs: [t.id]);
   }
 
   Future<List<T>> findAll();

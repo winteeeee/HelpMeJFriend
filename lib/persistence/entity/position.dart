@@ -6,16 +6,11 @@ class Position extends Entity {
   double longitude;
 
   Position({
-    required id,
+    id,
     required this.name,
     required this.latitude,
     required this.longitude
   }) : super(id);
-
-  @override
-  String getTableName() {
-    return "position";
-  }
 
   @override
   Map<String, dynamic> toMap() {

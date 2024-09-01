@@ -3,7 +3,7 @@ import 'package:help_me_j_friend/persistence/repository/repository.dart';
 import 'package:sqflite/sqflite.dart';
 
 class PlanRepository extends Repository<Plan> {
-  String tableName = "task";
+  String tableName = "plan";
 
   @override
   Future<List<Plan>> findAll() async {
