@@ -30,8 +30,8 @@ class Plan extends Entity {
     return Plan(
         id: map['id'],
         name: map['name'],
-        startDate: map['start_date'],
-        endDate: map['end_date'],
+        startDate: DateTime.parse(map['start_date']),
+        endDate: DateTime.parse(map['end_date']),
         accommodationPositionId: map['accommodation_position_id'],
     );
   }
