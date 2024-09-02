@@ -28,4 +28,24 @@ class DialogFactory {
       ],
     ));
   }
+
+  static Future<bool?> showDeleteDialog(context, content) {
+    return showDialog<bool>(context: context, builder: (context) => AlertDialog(
+      content: Text(content),
+      actions: [
+        ElevatedButton(
+            onPressed: () => {
+              Navigator.of(context).pop(true),
+            },
+            style: JFriendButtonStyle.subElevatedButtonStyle,
+            child: const Text("확인")),
+        ElevatedButton(
+            onPressed: () => {
+              Navigator.of(context).pop(false),
+            },
+            style: JFriendButtonStyle.subElevatedButtonStyle,
+            child: const Text("취소"))
+      ],
+    ));
+  }
 }

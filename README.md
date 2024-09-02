@@ -1,6 +1,6 @@
 # help_me_j_friend
 
-여행 일정 짜주는 J 친구
+여행 일정 관리해주는 J 친구
 
 ## Getting Started
 

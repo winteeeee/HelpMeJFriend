@@ -11,7 +11,7 @@ class TextInputWidget extends StatefulWidget {
     super.key,
     required this.name,
     required this.width,
-    required this.setState
+    required this.setState,
   });
 
   @override

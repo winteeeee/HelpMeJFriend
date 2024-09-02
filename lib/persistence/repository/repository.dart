@@ -19,6 +19,8 @@ abstract class Repository<T extends Entity> {
         'jfriend.db',
         version: 1,
         onCreate: (db, version) async {
+          await db.execute('''PRAGMA foreign_keys = ON''');
+
           await db.execute('''
           CREATE TABLE Position (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -36,8 +38,8 @@ abstract class Repository<T extends Entity> {
               end_time TEXT NOT NULL,
               position_id INTEGER NOT NULL,
               plan_id INTEGER NOT NULL,
-              FOREIGN KEY (position_id) REFERENCES position(id)
-              FOREIGN KEY (plan_id) REFERENCES plan(id)
+              FOREIGN KEY (position_id) REFERENCES Position(id) ON DELETE CASCADE
+              FOREIGN KEY (plan_id) REFERENCES Plan(id)
           )
           ''');
 
@@ -47,8 +49,8 @@ abstract class Repository<T extends Entity> {
               name TEXT NOT NULL,
               start_date TEXT NOT NULL,
               end_date TEXT NOT NULL,
-              accommodation_position_id INTEGER NOT NULL
-              FOREIGN KEY (accommodation_position_id) REFERENCES position(id)
+              accommodation_position_id INTEGER NOT NULL,
+              FOREIGN KEY (accommodation_position_id) REFERENCES Position(id) ON DELETE CASCADE
           )
           ''');
         }

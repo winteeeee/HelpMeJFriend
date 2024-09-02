@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:help_me_j_friend/persistence/entity/plan.dart';
 import 'package:help_me_j_friend/persistence/repository/plan_repository.dart';
+import 'package:help_me_j_friend/persistence/repository/position_repository.dart';
 import 'package:help_me_j_friend/route/main_route.dart';
+import 'package:help_me_j_friend/route/plan_update_route.dart';
 import 'package:help_me_j_friend/style/button_style.dart';
 import 'package:help_me_j_friend/style/text_style.dart';
+import 'package:help_me_j_friend/widget/dialog.dart';
 import 'package:help_me_j_friend/widget/loading.dart';
 
 class PlanFindRoute extends StatefulWidget {
@@ -15,6 +18,7 @@ class PlanFindRoute extends StatefulWidget {
 
 class _PlanFindState extends State<PlanFindRoute> {
   PlanRepository planRepository = PlanRepository();
+  PositionRepository positionRepository = PositionRepository();
 
   Future<List<Plan>> _fetchPlans() async {
     return planRepository.findAll();
@@ -68,6 +72,44 @@ class _PlanFindState extends State<PlanFindRoute> {
                                 title: Text(plan.name, style: JFriendTextStyle.textBold24),
                                 subtitle: Text("${plan.startDate.toString().split(" ")[0]} - ${plan.endDate.toString().split(" ")[0]}",
                                     style: JFriendTextStyle.text18),
+                                trailing: PopupMenuButton(itemBuilder: (context) => [
+                                  PopupMenuItem(child: ListTile(
+                                    leading: const Icon(Icons.settings),
+                                    title: const Text("수정"),
+                                    onTap: () async {
+                                      var newPlan = await planRepository.findById(plan.id);
+                                      var position = await positionRepository.findById(plan.accommodationPositionId);
+
+                                      if (context.mounted) {
+                                        Navigator.push(context,
+                                            MaterialPageRoute(builder: (_) =>
+                                                PlanUpdateRoute(
+                                                    plan: newPlan,
+                                                    position: position)
+                                            ));
+                                      }
+                                    },
+                                  )),
+                                  PopupMenuItem(child: ListTile(
+                                    leading: const Icon(Icons.delete),
+                                    title: const Text("삭제"),
+                                    onTap: () async {
+                                      final deleteCheck = await DialogFactory.showDeleteDialog(context, "정말로 삭제하시겠습니까?");
+
+                                      if (deleteCheck!) {
+                                        await planRepository.delete(plan);
+                                        await positionRepository.delete(await positionRepository.findById(plan.accommodationPositionId));
+                                        setState(() {
+                                          plans.remove(plan);
+                                        });
+                                      }
+
+                                      if (context.mounted) {
+                                        Navigator.pop(context);
+                                      }
+                                    },
+                                  ))
+                                ])
                               );
                             }
                         ),

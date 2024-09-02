@@ -11,55 +11,57 @@ import 'package:help_me_j_friend/widget/date_input_widget.dart';
 import 'package:help_me_j_friend/widget/dialog.dart';
 import 'package:help_me_j_friend/widget/text_input_widget.dart';
 
-class PlanCreateRoute extends StatefulWidget {
-  const PlanCreateRoute({super.key});
+class PlanUpdateRoute extends StatefulWidget {
+  final Plan plan;
+  final Position position;
+
+  const PlanUpdateRoute({super.key, required this.plan, required this.position});
 
   @override
-  State<StatefulWidget> createState() => _PlanCreateState();
+  State<StatefulWidget> createState() => _PlanUpdateState();
 }
 
-class _PlanCreateState extends State<PlanCreateRoute> {
-  //[Position]
-  String positionName = "";
-  LatLng pos = const LatLng(37.5666, 126.97819);
-
-  //[Plan]
-  String planName = "";
-  DateTime planStartDate = DateTime.now();
-  DateTime planEndDate = DateTime.now();
-
-  //[Repository]
+class _PlanUpdateState extends State<PlanUpdateRoute> {
   PositionRepository positionRepository = PositionRepository();
   PlanRepository planRepository = PlanRepository();
+  late String planName;
+  late String positionName;
 
   void setPlanName(text) {
     setState(() {
-      planName = text;
+      widget.plan.name = text;
     });
   }
 
   void setPlanStartDate(date) {
     setState(() {
-      planStartDate = date;
+      widget.plan.startDate = date;
     });
   }
 
   void setPlanEndDate(date) {
     setState(() {
-      planEndDate = date;
+      widget.plan.endDate = date;
     });
   }
 
   void setPositionName(name) {
     setState(() {
-      positionName = name;
+      widget.position.name = name;
     });
   }
 
   void setPos(position) {
     setState(() {
-      pos = position;
+      widget.position.latitude = position.latitude;
+      widget.position.longitude = position.longitude;
     });
+  }
+
+  @override void initState() {
+    super.initState();
+    planName = "일정 이름(${widget.plan.name})";
+    positionName = "숙소 이름(${widget.position.name})";
   }
 
   @override
@@ -75,17 +77,17 @@ class _PlanCreateState extends State<PlanCreateRoute> {
             SizedBox(height: screenHeight * 0.1),
             Text("[일정 생성]", style: JFriendTextStyle.textBold36),
             SizedBox(height: screenHeight * 0.05),
-            TextInputWidget(name: "일정 이름", width: screenWidth * 0.8, setState: setPlanName),
+            TextInputWidget(name: planName, width: screenWidth * 0.8, setState: setPlanName),
             SizedBox(height: screenHeight * 0.03),
-            DateInputWidget(name: "일정 시작 날짜", width: screenWidth * 0.8, date: planStartDate, setState: setPlanStartDate),
+            DateInputWidget(name: "일정 시작 날짜", width: screenWidth * 0.8, date: widget.plan.startDate, setState: setPlanStartDate),
             SizedBox(height: screenHeight * 0.03),
-            DateInputWidget(name: "일정 종료 날짜", width: screenWidth * 0.8, date: planEndDate, setState: setPlanEndDate),
+            DateInputWidget(name: "일정 종료 날짜", width: screenWidth * 0.8, date: widget.plan.endDate, setState: setPlanEndDate),
             SizedBox(height: screenHeight * 0.03),
-            TextInputWidget(name: "숙소 이름", width: screenWidth * 0.8, setState: setPositionName),
+            TextInputWidget(name: positionName, width: screenWidth * 0.8, setState: setPositionName),
             SizedBox(height: screenHeight * 0.03),
             ElevatedButton(onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (_) => PositionSelectRoute(
-                  pos: pos,
+                  pos: LatLng(widget.position.latitude, widget.position.longitude),
                   setState: setPos)));
             }, child: const Text("숙소 선택 하기")),
             SizedBox(height: screenHeight * 0.1),
@@ -95,29 +97,17 @@ class _PlanCreateState extends State<PlanCreateRoute> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ElevatedButton(onPressed: () async {
-                    if (planEndDate.isBefore(planStartDate)) {
+                    if (widget.plan.endDate.isBefore(widget.plan.startDate)) {
                       DialogFactory.showAlertDialog(context, "시작 날짜는 종료 날짜보다 앞에 있어야 합니다.");
                     } else {
-                      int accommodationPositionId = await positionRepository.insert(
-                          Position(
-                              name: positionName,
-                              latitude: pos.latitude,
-                              longitude: pos.longitude
-                          )
-                      );
-
-                      await planRepository.insert(Plan(
-                          name: planName,
-                          startDate: planStartDate,
-                          endDate: planEndDate,
-                          accommodationPositionId: accommodationPositionId)
-                      );
+                      await positionRepository.update(widget.position);
+                      await planRepository.update(widget.plan);
 
                       if (context.mounted) {
-                        DialogFactory.showBackDialog(context, "일정이 생성되었습니다.");
+                        DialogFactory.showBackDialog(context, "일정이 수정되었습니다.");
                       }
                     }
-                  }, style: JFriendButtonStyle.subElevatedButtonStyle, child: const Text("생성")),
+                  }, style: JFriendButtonStyle.subElevatedButtonStyle, child: const Text("수정")),
                   ElevatedButton(onPressed: () {
                     Navigator.pop(context);
                   }, style: JFriendButtonStyle.subElevatedButtonStyle, child: const Text("나가기")),
