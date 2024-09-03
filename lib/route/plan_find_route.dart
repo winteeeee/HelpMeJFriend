@@ -3,6 +3,7 @@ import 'package:help_me_j_friend/persistence/entity/plan.dart';
 import 'package:help_me_j_friend/persistence/repository/plan_repository.dart';
 import 'package:help_me_j_friend/persistence/repository/position_repository.dart';
 import 'package:help_me_j_friend/route/main_route.dart';
+import 'package:help_me_j_friend/route/plan_detail_route.dart';
 import 'package:help_me_j_friend/route/plan_update_route.dart';
 import 'package:help_me_j_friend/style/button_style.dart';
 import 'package:help_me_j_friend/style/text_style.dart';
@@ -72,6 +73,9 @@ class _PlanFindState extends State<PlanFindRoute> {
                                 title: Text(plan.name, style: JFriendTextStyle.textBold24),
                                 subtitle: Text("${plan.startDate.toString().split(" ")[0]} - ${plan.endDate.toString().split(" ")[0]}",
                                     style: JFriendTextStyle.text18),
+                                onTap: () {
+                                  Navigator.push(context, MaterialPageRoute(builder: (_) => PlanDetailRoute(plan: plan)));
+                                },
                                 trailing: PopupMenuButton(itemBuilder: (context) => [
                                   PopupMenuItem(child: ListTile(
                                     leading: const Icon(Icons.settings),

@@ -20,7 +20,7 @@ class Plan extends Entity {
       'id': id,
       'name': name,
       'start_date': startDate.toString().split(" ")[0],
-      'end_date': startDate.toString().split(" ")[0],
+      'end_date': endDate.toString().split(" ")[0],
       'accommodation_position_id': accommodationPositionId,
     };
   }

@@ -104,6 +104,7 @@ class _PlanUpdateState extends State<PlanUpdateRoute> {
                       await planRepository.update(widget.plan);
 
                       if (context.mounted) {
+                        //TODO 메인 화면이 아닌 일정 조회 화면으로 돌아가도록 수정
                         DialogFactory.showBackDialog(context, "일정이 수정되었습니다.");
                       }
                     }

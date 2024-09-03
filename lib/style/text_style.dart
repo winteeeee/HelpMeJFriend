@@ -13,6 +13,12 @@ class JFriendTextStyle {
     fontWeight: FontWeight.bold,
   );
 
+  static TextStyle textBold18 = const TextStyle(
+      color: Colors.white,
+      fontSize: 18,
+    fontWeight: FontWeight.bold
+  );
+
   static TextStyle text18 = const TextStyle(
     color: Colors.white,
     fontSize: 18
