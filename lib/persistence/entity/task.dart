@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:help_me_j_friend/persistence/entity/entity.dart';
+import 'package:help_me_j_friend/util/utils.dart';
 
 class Task extends Entity {
   String name;
-  TimeOfDay startTime;
-  TimeOfDay endTime;
+  DateTime startTime;
+  DateTime endTime;
+  int planId;
   int positionId;
 
   Task({
@@ -12,6 +14,7 @@ class Task extends Entity {
     required this.name,
     required this.startTime,
     required this.endTime,
+    required this.planId,
     required this.positionId
   }) : super(id);
 
@@ -20,8 +23,9 @@ class Task extends Entity {
     return {
       'id': id,
       'name': name,
-      'start_time': startTime,
-      'end_time': endTime,
+      'start_time': startTime.toString(),
+      'end_time': endTime.toString(),
+      'plan_id': planId,
       'position_id': positionId
     };
   }
@@ -30,8 +34,9 @@ class Task extends Entity {
     return Task(
         id: map['id'],
         name: map['name'],
-        startTime: map['start_time'],
-        endTime: map['end_time'],
+        startTime: DateTime.parse(map['start_time']),
+        endTime: DateTime.parse(map['end_time']),
+        planId: map['plan_id'],
         positionId: map['position_id']
     );
   }

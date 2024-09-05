@@ -75,7 +75,7 @@ class _PlanUpdateState extends State<PlanUpdateRoute> {
         body: Center(child: Column(
           children: [
             SizedBox(height: screenHeight * 0.1),
-            Text("[일정 생성]", style: JFriendTextStyle.textBold36),
+            Text("[일정 수정]", style: JFriendTextStyle.textBold36),
             SizedBox(height: screenHeight * 0.05),
             TextInputWidget(name: planName, width: screenWidth * 0.8, setState: setPlanName),
             SizedBox(height: screenHeight * 0.03),

@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_week_view/flutter_week_view.dart';
+import 'package:help_me_j_friend/persistence/repository/position_repository.dart';
 import 'package:help_me_j_friend/persistence/repository/task_repository.dart';
+import 'package:help_me_j_friend/route/task_create_route.dart';
+import 'package:help_me_j_friend/route/task_detail_route.dart';
 import 'package:help_me_j_friend/style/text_style.dart';
 import '../persistence/entity/plan.dart';
+import '../persistence/entity/position.dart';
+import '../persistence/entity/task.dart';
 import '../style/button_style.dart';
+import '../widget/loading.dart';
 
 
 class PlanDetailRoute extends StatefulWidget {
@@ -15,7 +21,8 @@ class PlanDetailRoute extends StatefulWidget {
 }
 
 class _PlanDetailState extends State<PlanDetailRoute> {
-  TaskRepository taskRepository = TaskRepository();
+  var positionRepository = PositionRepository();
+  var taskRepository = TaskRepository();
   //TODO 오늘 날짜를 클릭하면 구글맵과 연동
 
   List<DateTime> getDateArray(Plan p) {
@@ -28,15 +35,27 @@ class _PlanDetailState extends State<PlanDetailRoute> {
     return result;
   }
 
-  List<FlutterWeekViewEvent> getEventArray(Plan p) {
+  Future<List<FlutterWeekViewEvent>> getEventArray(BuildContext context, Plan p) async {
     List<FlutterWeekViewEvent> result = [];
-    //TODO Task 조회 구현
-    //TODO onTap을 이용하여 수정과 삭제 구현
+    List<Task> tasks = await taskRepository.findByPositionId(widget.plan.id!);
+    for (Task t in tasks) {
+      Position pos = await positionRepository.findById(t.positionId);
+      result.add(FlutterWeekViewEvent(
+          title: t.name,
+          description: pos.name,
+          start: t.startTime,
+          end: t.endTime,
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => TaskDetailRoute(task: t)));
+          })
+      );
+    }
     return result;
   }
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
     return MaterialApp(
@@ -52,20 +71,44 @@ class _PlanDetailState extends State<PlanDetailRoute> {
                       style: JFriendTextStyle.textBold18),
                 ),
               ),
-              SizedBox(
-                height: screenHeight * 0.7,
-                  child: WeekView(
-                    dates: getDateArray(widget.plan),
-                    events: getEventArray(widget.plan),
-                    userZoomable: false,
-                    style: const WeekViewStyle(
-                        showHorizontalScrollbar: true
-                    ),
-                    onBackgroundTappedDown: (date) {
-                      //TODO Task 추가 구현
-                    },
-                  )
-              ),
+              FutureBuilder(
+                  future: getEventArray(context, widget.plan),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: Loading(width: screenWidth * 0.5, height: screenHeight * 0.5));
+                    }
+
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("할 일을 가져오는 중 오류가 발생했습니다.\n${snapshot.error}", style: JFriendTextStyle.textBold24),
+                          ],
+                        ),
+                      );
+                    }
+
+                    if (snapshot.hasData) {
+                      List<FlutterWeekViewEvent>? events = snapshot.data;
+                      return SizedBox(
+                          height: screenHeight * 0.7,
+                          child: WeekView(
+                            dates: getDateArray(widget.plan),
+                            events: events!,
+                            userZoomable: false,
+                            style: const WeekViewStyle(
+                                showHorizontalScrollbar: true
+                            ),
+                            onBackgroundTappedDown: (date) {
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => TaskCreateRoute(plan: widget.plan, date: date)));
+                            },
+                          )
+                      );
+                    }
+
+                    return Center(child: Loading(width: screenWidth * 0.5, height: screenHeight * 0.5));
+                  }),
               SizedBox(height: screenHeight * 0.05),
               ElevatedButton(onPressed: () {
                 Navigator.pop(context);
