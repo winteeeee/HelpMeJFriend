@@ -5,6 +5,7 @@ import 'package:help_me_j_friend/style/text_style.dart';
 class DateInputWidget extends StatefulWidget {
   final String name;
   final double width;
+  final double height;
   final DateTime date;
   final Function setState;
 
@@ -12,6 +13,7 @@ class DateInputWidget extends StatefulWidget {
     super.key,
     required this.name,
     required this.width,
+    required this.height,
     required this.date,
     required this.setState
   });
@@ -25,6 +27,7 @@ class _DateInputWidget extends State<DateInputWidget> {
   Widget build(BuildContext context) {
     return SizedBox(
       width: widget.width,
+      height: widget.height,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

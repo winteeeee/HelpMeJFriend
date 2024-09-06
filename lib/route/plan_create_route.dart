@@ -72,17 +72,33 @@ class _PlanCreateState extends State<PlanCreateRoute> {
         backgroundColor: Colors.grey,
         body: Center(child: Column(
           children: [
-            SizedBox(height: screenHeight * 0.1),
-            Text("[일정 생성]", style: JFriendTextStyle.textBold36),
-            SizedBox(height: screenHeight * 0.05),
-            TextInputWidget(name: "일정 이름", width: screenWidth * 0.8, setState: setPlanName),
-            SizedBox(height: screenHeight * 0.03),
-            DateInputWidget(name: "일정 시작 날짜", width: screenWidth * 0.8, date: planStartDate, setState: setPlanStartDate),
-            SizedBox(height: screenHeight * 0.03),
-            DateInputWidget(name: "일정 종료 날짜", width: screenWidth * 0.8, date: planEndDate, setState: setPlanEndDate),
-            SizedBox(height: screenHeight * 0.03),
-            TextInputWidget(name: "숙소 이름", width: screenWidth * 0.8, setState: setPositionName),
-            SizedBox(height: screenHeight * 0.03),
+            SizedBox(height: screenHeight * 0.1, child: Text("[일정 생성]", style: JFriendTextStyle.textBold36)),
+            TextInputWidget(
+                name: "일정 이름",
+                width: screenWidth * 0.8,
+                height: screenHeight * 0.1,
+                setState: setPlanName
+            ),
+            DateInputWidget(
+                name: "일정 시작 날짜",
+                width: screenWidth * 0.8,
+                height: screenHeight * 0.1,
+                date: planStartDate,
+                setState: setPlanStartDate
+            ),
+            DateInputWidget(
+                name: "일정 종료 날짜",
+                width: screenWidth * 0.8,
+                height: screenHeight * 0.1,
+                date: planEndDate,
+                setState: setPlanEndDate
+            ),
+            TextInputWidget(
+                name: "숙소 이름",
+                width: screenWidth * 0.8,
+                height: screenHeight * 0.1,
+                setState: setPositionName
+            ),
             ElevatedButton(onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (_) => PositionSelectRoute(
                   pos: pos,

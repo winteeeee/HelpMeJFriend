@@ -163,14 +163,31 @@ class _TaskUpdateState extends State<TaskUpdateRoute> {
               height: screenHeight * 0.8,
               child: Column(
                 children: [
-                  TextInputWidget(name: widget.task == null ? "할 일 이름" : widget.task!.name, width: screenWidth * 0.8, setState: setTaskName),
-                  SizedBox(height: screenHeight * 0.1),
-                  TimeInputWidget(name: "시작 시간", width: screenWidth * 0.8, time: taskStartTime, setState: setStartTime),
-                  SizedBox(height: screenHeight * 0.03),
-                  TimeInputWidget(name: "종료 시간", width: screenWidth * 0.8, time: taskEndTime, setState: setEndTime),
-                  SizedBox(height: screenHeight * 0.1),
-                  TextInputWidget(name: widget.position == null ? "위치 이름" : widget.position!.name, width: screenWidth * 0.8, setState: setPositionName),
-                  SizedBox(height: screenHeight * 0.03),
+                  TextInputWidget(
+                      name: widget.task == null ? "할 일 이름" : widget.task!.name,
+                      width: screenWidth * 0.8,
+                      height: screenHeight * 0.1,
+                      setState: setTaskName),
+                  TimeInputWidget(
+                      name: "시작 시간",
+                      width: screenWidth * 0.8,
+                      height: screenHeight * 0.1,
+                      time: taskStartTime,
+                      setState: setStartTime
+                  ),
+                  TimeInputWidget(
+                      name: "종료 시간",
+                      width: screenWidth * 0.8,
+                      height: screenHeight * 0.1,
+                      time: taskEndTime,
+                      setState: setEndTime
+                  ),
+                  TextInputWidget(
+                      name: widget.position == null ? "위치 이름" : widget.position!.name,
+                      width: screenWidth * 0.8,
+                      height: screenHeight * 0.1,
+                      setState: setPositionName
+                  ),
                   ElevatedButton(onPressed: () {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => PositionSelectRoute(
                         pos: pos,
