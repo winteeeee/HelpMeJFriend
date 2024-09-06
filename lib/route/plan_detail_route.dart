@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_week_view/flutter_week_view.dart';
 import 'package:help_me_j_friend/persistence/repository/position_repository.dart';
 import 'package:help_me_j_friend/persistence/repository/task_repository.dart';
-import 'package:help_me_j_friend/route/task_create_route.dart';
+import 'package:help_me_j_friend/route/task_update_route.dart';
 import 'package:help_me_j_friend/route/task_detail_route.dart';
 import 'package:help_me_j_friend/style/text_style.dart';
 import '../persistence/entity/plan.dart';
@@ -46,7 +46,7 @@ class _PlanDetailState extends State<PlanDetailRoute> {
           start: t.startTime,
           end: t.endTime,
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => TaskDetailRoute(task: t)));
+            Navigator.push(context, MaterialPageRoute(builder: (_) => TaskDetailRoute(plan: widget.plan, task: t, position: pos)));
           })
       );
     }
@@ -101,7 +101,7 @@ class _PlanDetailState extends State<PlanDetailRoute> {
                                 showHorizontalScrollbar: true
                             ),
                             onBackgroundTappedDown: (date) {
-                              Navigator.push(context, MaterialPageRoute(builder: (_) => TaskCreateRoute(plan: widget.plan, date: date)));
+                              Navigator.push(context, MaterialPageRoute(builder: (_) => TaskUpdateRoute(plan: widget.plan, date: date)));
                             },
                           )
                       );

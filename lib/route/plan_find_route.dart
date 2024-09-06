@@ -78,7 +78,7 @@ class _PlanFindState extends State<PlanFindRoute> {
                                 },
                                 trailing: PopupMenuButton(itemBuilder: (context) => [
                                   PopupMenuItem(child: ListTile(
-                                    leading: const Icon(Icons.settings),
+                                    leading: const Icon(Icons.build),
                                     title: const Text("수정"),
                                     onTap: () async {
                                       var newPlan = await planRepository.findById(plan.id);

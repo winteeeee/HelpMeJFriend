@@ -19,4 +19,18 @@ class Utils {
         time.minute
     );
   }
+
+  static String dateToTimeString(DateTime date) {
+    String hourString = date.hour.toString();
+    String minuteString = date.minute.toString();
+
+    String hour = hourString.length == 1 ? "0$hourString" : hourString;
+    String minute = minuteString.length == 1 ? "0$minuteString" : minuteString;
+
+    return "$hour:$minute";
+  }
+
+  static TimeOfDay dateToTime(DateTime date) {
+    return TimeOfDay(hour: date.hour, minute: date.minute);
+  }
 }
