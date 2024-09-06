@@ -32,4 +32,15 @@ class TaskRepository extends Repository<Task> {
       return Task.toEntity(maps[index]);
     });
   }
+
+  Future<List<Task>> findTodayTasks(date) async {
+    Database db = await database;
+    List<Map<String, dynamic>> maps = await db.rawQuery("""
+      SELECT * FROM Task WHERE start_time <= $date <= end_time
+    """);
+
+    return List.generate(maps.length, (index) {
+      return Task.toEntity(maps[index]);
+    });
+  }
 }

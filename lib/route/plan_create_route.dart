@@ -107,38 +107,30 @@ class _PlanCreateState extends State<PlanCreateRoute> {
             SizedBox(height: screenHeight * 0.1),
             SizedBox(
               width: screenWidth * 0.8,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(onPressed: () async {
-                    if (planEndDate.isBefore(planStartDate)) {
-                      DialogFactory.showAlertDialog(context, "시작 날짜는 종료 날짜보다 앞에 있어야 합니다.");
-                    } else {
-                      int accommodationPositionId = await positionRepository.insert(
-                          Position(
-                              name: positionName,
-                              latitude: pos.latitude,
-                              longitude: pos.longitude
-                          )
-                      );
+              child: ElevatedButton(onPressed: () async {
+                if (planEndDate.isBefore(planStartDate)) {
+                  DialogFactory.showAlertDialog(context, "시작 날짜는 종료 날짜보다 앞에 있어야 합니다.");
+                } else {
+                  int accommodationPositionId = await positionRepository.insert(
+                      Position(
+                          name: positionName,
+                          latitude: pos.latitude,
+                          longitude: pos.longitude
+                      )
+                  );
 
-                      await planRepository.insert(Plan(
-                          name: planName,
-                          startDate: planStartDate,
-                          endDate: planEndDate,
-                          accommodationPositionId: accommodationPositionId)
-                      );
+                  await planRepository.insert(Plan(
+                      name: planName,
+                      startDate: planStartDate,
+                      endDate: planEndDate,
+                      accommodationPositionId: accommodationPositionId)
+                  );
 
-                      if (context.mounted) {
-                        DialogFactory.showBackDialog(context, "일정이 생성되었습니다.");
-                      }
-                    }
-                  }, style: JFriendButtonStyle.subElevatedButtonStyle, child: const Text("생성")),
-                  ElevatedButton(onPressed: () {
-                    Navigator.pop(context);
-                  }, style: JFriendButtonStyle.subElevatedButtonStyle, child: const Text("나가기")),
-                ],
-              ),
+                  if (context.mounted) {
+                    DialogFactory.showBackDialog(context, "일정이 생성되었습니다.");
+                  }
+                }
+              }, style: JFriendButtonStyle.subElevatedButtonStyle, child: const Text("생성")),
             )
           ],
         )),

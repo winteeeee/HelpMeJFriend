@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:help_me_j_friend/persistence/entity/plan.dart';
+import 'package:help_me_j_friend/persistence/entity/position.dart';
+import 'package:help_me_j_friend/persistence/entity/task.dart';
 
 class Utils {
   static String timeToString(TimeOfDay time) {
@@ -32,5 +35,20 @@ class Utils {
 
   static TimeOfDay dateToTime(DateTime date) {
     return TimeOfDay(hour: date.hour, minute: date.minute);
+  }
+
+  static String positionToBase64(Position p) {
+    //TODO 구현
+    return "";
+  }
+
+  static String planToBase64(Plan p) {
+    //TODO 구현
+    return "";
+  }
+
+  static String taskToBase64(Task t) {
+    //TODO 구현
+    return "";
   }
 }

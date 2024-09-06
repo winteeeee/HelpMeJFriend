@@ -112,24 +112,20 @@ class _PlanFindState extends State<PlanFindRoute> {
                                         Navigator.pop(context);
                                       }
                                     },
-                                  ))
+                                  )),
+                                  //TODO 일정 코드화 기능 추가
                                 ])
                               );
                             }
                         ),
                       ),
-                      SizedBox(height: screenHeight * 0.1),
-                      ElevatedButton(onPressed: () {
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const MainRoute()));
-                      }, style: JFriendButtonStyle.subElevatedButtonStyle,
-                          child: const Text("나가기"))
                     ],
                   ),
                 );
               }
               return Center(child: Loading(width: screenWidth * 0.5, height: screenHeight * 0.5));
             }
-        )
+        ),
       ),
     );
   }
