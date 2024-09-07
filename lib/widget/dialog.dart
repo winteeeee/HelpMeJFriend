@@ -7,6 +7,7 @@ class DialogFactory {
   static void showAlertDialog(context, content, int popNumber) {
     showDialog(context: context, useRootNavigator: false, builder: (context) => AlertDialog(
       content: Text(content),
+      backgroundColor: Colors.grey,
       actions: [
         ElevatedButton(
             onPressed: () => {
@@ -23,6 +24,7 @@ class DialogFactory {
   static void showAlertDialogWithIndex(context, content, index, int popNumber) {
     showDialog(context: context, useRootNavigator: false, builder: (context) => AlertDialog(
       content: Text(content),
+      backgroundColor: Colors.grey,
       actions: [
         ElevatedButton(
             onPressed: () => {
@@ -40,6 +42,7 @@ class DialogFactory {
   static void showAlertDialogWithData(context, content, data, popNumber) {
     showDialog(context: context, useRootNavigator: false, builder: (context) => AlertDialog(
       content: Text(content),
+      backgroundColor: Colors.grey,
       actions: [
         ElevatedButton(
             onPressed: () => {
@@ -56,6 +59,7 @@ class DialogFactory {
   static Future<bool?> showDeleteDialog(context, content, int popNumber) {
     return showDialog<bool>(context: context, useRootNavigator: false, builder: (context) => AlertDialog(
       content: Text(content),
+      backgroundColor: Colors.grey,
       actions: [
         ElevatedButton(
             onPressed: () => {

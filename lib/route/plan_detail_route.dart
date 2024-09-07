@@ -46,6 +46,7 @@ class _PlanDetailState extends State<PlanDetailRoute> {
           start: t.startTime,
           end: t.endTime,
           onTap: () async {
+            //TODO 새로운 할 일이 정상적으로 리렌더링 되지 않음
             Task newTask = await Navigator.push(context, MaterialPageRoute(builder: (_) => TaskDetailRoute(plan: widget.plan, task: t, position: pos)));
             setState(() {
               t = newTask;

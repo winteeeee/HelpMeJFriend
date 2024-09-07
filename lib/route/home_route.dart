@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:help_me_j_friend/main.dart';
 import 'package:help_me_j_friend/provider/navigate_idx_provider.dart';
 import 'package:help_me_j_friend/route/main_route.dart';
 import 'package:help_me_j_friend/route/plan_update_route.dart';
@@ -8,6 +7,7 @@ import 'package:provider/provider.dart';
 
 class HomeRoute extends StatefulWidget {
   const HomeRoute({super.key});
+  //TODO 인덱스 이넘 추가
 
   @override
   State<StatefulWidget> createState() => _HomeRouteState();

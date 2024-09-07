@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:help_me_j_friend/persistence/entity/entity.dart';
 import 'package:help_me_j_friend/persistence/entity/plan.dart';
 import 'package:help_me_j_friend/persistence/entity/position.dart';
 import 'package:help_me_j_friend/persistence/entity/task.dart';
@@ -37,18 +40,11 @@ class Utils {
     return TimeOfDay(hour: date.hour, minute: date.minute);
   }
 
-  static String positionToBase64(Position p) {
-    //TODO 구현
-    return "";
+  static String entityToBase64(Entity e) {
+    return base64Encode(utf8.encode(jsonEncode(e.toMap())));
   }
 
-  static String planToBase64(Plan p) {
-    //TODO 구현
-    return "";
-  }
-
-  static String taskToBase64(Task t) {
-    //TODO 구현
-    return "";
+  static Map<String, dynamic> base64ToMap(String base64) {
+    return jsonDecode(utf8.decode(base64Decode(base64)));
   }
 }

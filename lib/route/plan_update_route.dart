@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:help_me_j_friend/persistence/repository/task_repository.dart';
 import 'package:help_me_j_friend/provider/navigate_idx_provider.dart';
+import 'package:help_me_j_friend/util/utils.dart';
+import 'package:provider/provider.dart';
 import '../persistence/entity/plan.dart';
 import '../persistence/entity/position.dart';
 import 'package:help_me_j_friend/persistence/repository/plan_repository.dart';
@@ -11,6 +14,8 @@ import 'package:help_me_j_friend/style/text_style.dart';
 import 'package:help_me_j_friend/widget/date_input_widget.dart';
 import 'package:help_me_j_friend/widget/dialog.dart';
 import 'package:help_me_j_friend/widget/text_input_widget.dart';
+
+import '../persistence/entity/task.dart';
 
 class PlanUpdateRoute extends StatefulWidget {
   final Plan? plan;
@@ -23,6 +28,7 @@ class PlanUpdateRoute extends StatefulWidget {
 
 class _PlanUpdateState extends State<PlanUpdateRoute> {
   var positionRepository = PositionRepository();
+  var taskRepository = TaskRepository();
   var planRepository = PlanRepository();
 
   //[Position]
@@ -33,6 +39,8 @@ class _PlanUpdateState extends State<PlanUpdateRoute> {
   late String planName;
   late DateTime planStartDate;
   late DateTime planEndDate;
+
+  String planCode = "";
 
   @override
   void initState() {
@@ -73,6 +81,12 @@ class _PlanUpdateState extends State<PlanUpdateRoute> {
   void setPos(position) {
     setState(() {
       pos = position;
+    });
+  }
+
+  void setPlanCode(code) {
+    setState(() {
+      planCode = code;
     });
   }
 
@@ -123,6 +137,28 @@ class _PlanUpdateState extends State<PlanUpdateRoute> {
     }
   }
 
+  Future<void> insertByCode() async {
+    List<String> codes = planCode.split("||");
+    List<String> taskCodes = codes[0].split("|");
+    List<String> positionCodes = codes[1].split("|");
+    Plan plan = Plan.toEntity(Utils.base64ToMap(codes[2]));
+
+    List<Task> tasks = [];
+    List<Position> positions = [];
+
+    for (String task in taskCodes) {
+      tasks.add(Task.toEntity(Utils.base64ToMap(task)));
+    }
+
+    for (String position in positionCodes) {
+      positions.add(Position.toEntity(Utils.base64ToMap(position)));
+    }
+
+    await positionRepository.insertAll(positions);
+    await taskRepository.insertAll(tasks);
+    await planRepository.insert(plan);
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -140,8 +176,43 @@ class _PlanUpdateState extends State<PlanUpdateRoute> {
                 title: Center(child: Text(widget.plan == null ? "[일정 생성]" : "[일정 수정]", style: JFriendTextStyle.textBold36)),
                 leading: Navigator.of(context).canPop() ? ElevatedButton(onPressed: () {
                   Navigator.pop(context);
-                }, style: JFriendButtonStyle.subElevatedButtonStyle,
+                },
+                    style: JFriendButtonStyle.subElevatedButtonStyle,
                     child: const Icon(Icons.arrow_back)) : const SizedBox.shrink(),
+                trailing: PopupMenuButton(itemBuilder: (context) => [
+                  PopupMenuItem(child: ListTile(
+                    leading: const Icon(Icons.code),
+                    title: const Text("코드로 생성"),
+                    onTap: () {
+                      Navigator.pop(context);
+                      showDialog(context: context, useRootNavigator: false, builder: (context) => AlertDialog(
+                        title: const Text("코드를 입력해주세요."),
+                        content: TextInputWidget(name: "일정 코드", width: screenWidth * 0.5, height: screenHeight * 0.1, setState: setPlanCode),
+                        backgroundColor: Colors.grey,
+                        actions: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ElevatedButton(
+                                  onPressed: () => {
+                                    insertByCode(),
+                                    DialogFactory.showAlertDialogWithIndex(context, "일정이 생성되었습니다.", 2, 1)
+                                  },
+                                  style: JFriendButtonStyle.subElevatedButtonStyle,
+                                  child: const Text("확인")),
+                              ElevatedButton(
+                                  onPressed: () => {
+                                    Navigator.pop(context)
+                                  },
+                                  style: JFriendButtonStyle.subElevatedButtonStyle,
+                                  child: const Text("취소"))
+                            ],
+                          )
+                        ],
+                      ));
+                    },
+                  )),
+                ]),
               ),
             ),
 
@@ -180,7 +251,8 @@ class _PlanUpdateState extends State<PlanUpdateRoute> {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => PositionSelectRoute(
                         pos: pos,
                         setState: setPos)));
-                  }, child: const Text("숙소 선택 하기")),
+                  }, style: JFriendButtonStyle.subElevatedButtonStyle,
+                      child: const Text("숙소 선택 하기")),
                 ],
               ),
             ),
@@ -191,6 +263,7 @@ class _PlanUpdateState extends State<PlanUpdateRoute> {
               height: screenHeight * 0.05,
               child: ElevatedButton(onPressed: () async {
                 if (planEndDate.isBefore(planStartDate)) {
+                  //TODO 날짜 겹치는지 여부도 확인
                   DialogFactory.showAlertDialog(context, "시작 날짜는 종료 날짜보다 앞에 있어야 합니다.", 1);
                 } else {
                   if (widget.plan == null) {

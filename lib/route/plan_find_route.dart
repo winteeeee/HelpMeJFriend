@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:help_me_j_friend/persistence/entity/plan.dart';
 import 'package:help_me_j_friend/persistence/repository/plan_repository.dart';
 import 'package:help_me_j_friend/persistence/repository/position_repository.dart';
@@ -8,8 +9,12 @@ import 'package:help_me_j_friend/route/plan_detail_route.dart';
 import 'package:help_me_j_friend/route/plan_update_route.dart';
 import 'package:help_me_j_friend/style/button_style.dart';
 import 'package:help_me_j_friend/style/text_style.dart';
+import 'package:help_me_j_friend/util/utils.dart';
 import 'package:help_me_j_friend/widget/dialog.dart';
 import 'package:help_me_j_friend/widget/loading.dart';
+
+import '../persistence/entity/position.dart';
+import '../persistence/entity/task.dart';
 
 class PlanFindRoute extends StatefulWidget {
   const PlanFindRoute({super.key});
@@ -102,15 +107,54 @@ class _PlanFindState extends State<PlanFindRoute> {
                                     },
                                   )),
                                   PopupMenuItem(child: ListTile(
+                                    leading: const Icon(Icons.code),
+                                    title: const Text("코드로 내보내기"),
+                                    onTap: () async {
+                                      Navigator.pop(context);
+                                      String code = "";
+
+                                      List<Task> tasks = await taskRepository.findByPlanId(plan.id);
+
+                                      List<Position> positions = [];
+                                      positions.add(await positionRepository.findById(plan.accommodationPositionId));
+                                      for (Task t in tasks) {
+                                        code += '${Utils.entityToBase64(t)}|';
+                                        positions.add(await positionRepository.findById(t.positionId));
+                                      }
+                                      code += '|';
+
+                                      for (Position p in positions) {
+                                        code += '${Utils.entityToBase64(p)}|';
+                                      }
+                                      code += '|';
+
+                                      code += Utils.entityToBase64(plan);
+                                      Clipboard.setData(ClipboardData(text: code));
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                            const SnackBar(
+                                                content: Text("코드가 클립보드에 복사되었습니다!"))
+                                        );
+                                      }
+                                    },
+                                  )),
+                                  PopupMenuItem(child: ListTile(
                                     leading: const Icon(Icons.delete),
                                     title: const Text("삭제"),
                                     onTap: () async {
                                       final deleteCheck = await DialogFactory.showDeleteDialog(context, "정말로 삭제하시겠습니까?", 1);
 
                                       if (deleteCheck!) {
+                                        List<Task> tasks = await taskRepository.findByPlanId(plan.id);
+                                        List<Position> positions = [await positionRepository.findById(plan.accommodationPositionId)];
+                                        for (Task t in tasks) {
+                                          positions.add(await positionRepository.findById(t.positionId));
+                                        }
+
+                                        await positionRepository.deleteAll(positions);
+                                        await taskRepository.deleteAll(tasks);
                                         await planRepository.delete(plan);
-                                        await positionRepository.delete(await positionRepository.findById(plan.accommodationPositionId));
-                                        await taskRepository.deleteAll(await taskRepository.findByPlanId(plan.id));
                                         setState(() {
                                           plans.remove(plan);
                                         });
@@ -121,7 +165,6 @@ class _PlanFindState extends State<PlanFindRoute> {
                                       }
                                     },
                                   )),
-                                  //TODO 일정 코드화 기능 추가
                                 ])
                               );
                             }

@@ -62,6 +62,12 @@ abstract class Repository<T extends Entity> {
     return await db.insert(T.toString(), t.toMap());
   }
 
+  Future<void> insertAll(List<T> list) async {
+    for (T t in list) {
+      await insert(t);
+    }
+  }
+
   Future<void> update(T t) async {
     Database db = await database;
     await db.update(T.toString(), t.toMap(), where: 'id = ?', whereArgs: [t.id]);
@@ -73,9 +79,8 @@ abstract class Repository<T extends Entity> {
   }
 
   Future<void> deleteAll(List<T> list) async {
-    Database db = await database;
     for (T t in list) {
-      await db.delete(T.toString(), where: "id = ?", whereArgs: [t.id]);
+      await delete(t);
     }
   }
 
