@@ -19,6 +19,7 @@ class MainRoute extends StatelessWidget {
     Future<List<FlutterWeekViewEvent>> getEventArray(BuildContext context, DateTime date) async {
       List<FlutterWeekViewEvent> result = [];
       List<Task> tasks = await taskRepository.findTodayTasks(date.toString().split(" ")[0]);
+      //TODO 여기도 OnTap 이벤트 추가
       for (Task t in tasks) {
         result.add(FlutterWeekViewEvent(
             title: t.name,

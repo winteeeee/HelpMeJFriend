@@ -39,7 +39,7 @@ class _GoogleMapState extends State<PositionSelectRoute> {
                       target: widget.pos, zoom: 11.0
                   ),
                   onLongPress: (pos) => {
-                  DialogFactory.showBackDialog(context, "위치가 선택되었습니다!"),
+                  DialogFactory.showAlertDialog(context, "위치가 선택되었습니다!", 2),
                     widget.setState(pos),
                   },
                 ),

@@ -42,7 +42,7 @@ class _TaskDetailState extends State<TaskDetailRoute> {
               child: ListTile(
                 title: Center(child: Text(widget.plan.name, style: JFriendTextStyle.textBold24,)),
                 leading: ElevatedButton(onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pop(context, widget.task);
                 }, style: JFriendButtonStyle.subElevatedButtonStyle,
                     child: const Icon(Icons.arrow_back)),
                 trailing: PopupMenuButton(itemBuilder: (context) => [
@@ -50,14 +50,20 @@ class _TaskDetailState extends State<TaskDetailRoute> {
                     leading: const Icon(Icons.build),
                     title: const Text("수정"),
                     onTap: () async {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => TaskUpdateRoute(plan: widget.plan, task: widget.task, position: widget.position)));
+                      Navigator.pop(context);
+                      Task newTask = await Navigator.push(context, MaterialPageRoute(builder: (_) => TaskUpdateRoute(plan: widget.plan, task: widget.task, position: widget.position)));
+                      setState(() {
+                        widget.task.name = newTask.name;
+                        widget.task.startTime = newTask.startTime;
+                        widget.task.endTime = newTask.endTime;
+                      });
                     }
                   )),
                   PopupMenuItem(child: ListTile(
                       leading: const Icon(Icons.delete),
                       title: const Text("삭제"),
                       onTap: () async {
-                        final deleteCheck = await DialogFactory.showDeleteDialog(context, "정말로 삭제하시겠습니까?");
+                        final deleteCheck = await DialogFactory.showDeleteDialog(context, "정말로 삭제하시겠습니까?", 1);
 
                         if (deleteCheck!) {
                           await taskRepository.delete(widget.task);
@@ -76,7 +82,7 @@ class _TaskDetailState extends State<TaskDetailRoute> {
               height: screenHeight * 0.1,
               child: Center(child: Text(widget.task.name, style: JFriendTextStyle.textBold18)),),
             SizedBox(
-              height: screenHeight * 0.8,
+              height: screenHeight * 0.6,
               child: Column(
                 children: [
                   ListTile(
@@ -93,7 +99,7 @@ class _TaskDetailState extends State<TaskDetailRoute> {
                   ),
                   SizedBox(
                     width: screenWidth * 0.7,
-                    height: screenHeight * 0.5,
+                    height: screenHeight * 0.3,
                     child: Center(
                         child: GoogleMap(
                             initialCameraPosition: CameraPosition(

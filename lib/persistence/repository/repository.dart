@@ -72,6 +72,13 @@ abstract class Repository<T extends Entity> {
     await db.delete(T.toString(), where: "id = ?", whereArgs: [t.id]);
   }
 
+  Future<void> deleteAll(List<T> list) async {
+    Database db = await database;
+    for (T t in list) {
+      await db.delete(T.toString(), where: "id = ?", whereArgs: [t.id]);
+    }
+  }
+
   Future<List<T>> findAll();
   Future<T> findById(id);
 }

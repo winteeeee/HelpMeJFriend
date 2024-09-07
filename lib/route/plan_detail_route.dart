@@ -37,7 +37,7 @@ class _PlanDetailState extends State<PlanDetailRoute> {
 
   Future<List<FlutterWeekViewEvent>> getEventArray(BuildContext context, Plan p) async {
     List<FlutterWeekViewEvent> result = [];
-    List<Task> tasks = await taskRepository.findByPositionId(widget.plan.id!);
+    List<Task> tasks = await taskRepository.findByPlanId(widget.plan.id!);
     for (Task t in tasks) {
       Position pos = await positionRepository.findById(t.positionId);
       result.add(FlutterWeekViewEvent(
@@ -45,8 +45,11 @@ class _PlanDetailState extends State<PlanDetailRoute> {
           description: pos.name,
           start: t.startTime,
           end: t.endTime,
-          onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => TaskDetailRoute(plan: widget.plan, task: t, position: pos)));
+          onTap: () async {
+            Task newTask = await Navigator.push(context, MaterialPageRoute(builder: (_) => TaskDetailRoute(plan: widget.plan, task: t, position: pos)));
+            setState(() {
+              t = newTask;
+            });
           })
       );
     }
@@ -70,6 +73,10 @@ class _PlanDetailState extends State<PlanDetailRoute> {
                   child: Text("${widget.plan.startDate.toString().split(" ")[0]} - ${widget.plan.endDate.toString().split(" ")[0]}",
                       style: JFriendTextStyle.textBold18),
                 ),
+                leading: Navigator.of(context).canPop() ? ElevatedButton(onPressed: () {
+                  Navigator.pop(context);
+                }, style: JFriendButtonStyle.subElevatedButtonStyle,
+                    child: const Icon(Icons.arrow_back)) : const SizedBox.shrink(),
               ),
               FutureBuilder(
                   future: getEventArray(context, widget.plan),
@@ -109,11 +116,6 @@ class _PlanDetailState extends State<PlanDetailRoute> {
 
                     return Center(child: Loading(width: screenWidth * 0.5, height: screenHeight * 0.5));
                   }),
-              SizedBox(height: screenHeight * 0.05),
-              ElevatedButton(onPressed: () {
-                Navigator.pop(context);
-              }, style: JFriendButtonStyle.subElevatedButtonStyle,
-                  child: const Text("나가기")),
             ],
           )
         ),

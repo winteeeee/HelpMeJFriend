@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:help_me_j_friend/persistence/entity/task.dart';
@@ -108,7 +107,7 @@ class _TaskUpdateState extends State<TaskUpdateRoute> {
     );
 
     if (context.mounted) {
-      DialogFactory.showBackDialog(context, "할 일이 생성되었습니다.");
+      DialogFactory.showAlertDialog(context, "할 일이 생성되었습니다.", 2);
     }
   }
 
@@ -134,7 +133,8 @@ class _TaskUpdateState extends State<TaskUpdateRoute> {
     );
 
     if (context.mounted) {
-      DialogFactory.showBackDialog(context, "할 일이 수정되었습니다.");
+      var newTask = await taskRepository.findById(widget.task!.id!);
+      DialogFactory.showAlertDialogWithData(context, "할 일이 수정되었습니다.", newTask, 2);
     }
   }
 
@@ -205,7 +205,7 @@ class _TaskUpdateState extends State<TaskUpdateRoute> {
               height: screenHeight * 0.05,
               child: ElevatedButton(onPressed: () async {
                 if (!timeCheck(taskStartTime, taskEndTime)) {
-                  DialogFactory.showAlertDialog(context, "시작 시간은 종료 시간보다 앞에 있어야 합니다.");
+                  DialogFactory.showAlertDialog(context, "시작 시간은 종료 시간보다 앞에 있어야 합니다.", 1);
                 } else {
                   if (widget.task == null) {
                     await insert(context);

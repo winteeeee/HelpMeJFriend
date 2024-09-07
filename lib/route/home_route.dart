@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:help_me_j_friend/main.dart';
+import 'package:help_me_j_friend/provider/navigate_idx_provider.dart';
 import 'package:help_me_j_friend/route/main_route.dart';
 import 'package:help_me_j_friend/route/plan_update_route.dart';
 import 'package:help_me_j_friend/route/plan_find_route.dart';
+import 'package:provider/provider.dart';
 
 class HomeRoute extends StatefulWidget {
   const HomeRoute({super.key});
@@ -11,7 +14,6 @@ class HomeRoute extends StatefulWidget {
 }
 
 class _HomeRouteState extends State<HomeRoute> {
-  int index = 0;
   final List<Widget> widgetList = const [
     MainRoute(),
     PlanUpdateRoute(),
@@ -23,15 +25,13 @@ class _HomeRouteState extends State<HomeRoute> {
     return MaterialApp(
       home: Scaffold(
         backgroundColor: Colors.grey,
-        body: SafeArea(child: widgetList[index]),
+        body: SafeArea(child: widgetList[context.watch<IndexProvider>().index]),
         bottomNavigationBar: BottomNavigationBar(
             backgroundColor: Colors.grey,
             selectedItemColor: Colors.white,
-            currentIndex: index,
+            currentIndex: context.watch<IndexProvider>().index,
             onTap: (idx) {
-              setState(() {
-                index = idx;
-              });
+              context.read<IndexProvider>().setIndex(idx);
             },
             items: const [
               BottomNavigationBarItem(

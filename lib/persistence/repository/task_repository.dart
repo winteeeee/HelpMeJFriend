@@ -22,7 +22,7 @@ class TaskRepository extends Repository<Task> {
     return Task.toEntity(map[0]);
   }
 
-  Future<List<Task>> findByPositionId(id) async {
+  Future<List<Task>> findByPlanId(id) async {
     Database db = await database;
     List<Map<String, dynamic>> maps = await db.rawQuery("""
     SELECT * FROM Task WHERE plan_id = $id

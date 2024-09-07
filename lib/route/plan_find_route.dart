@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:help_me_j_friend/persistence/entity/plan.dart';
 import 'package:help_me_j_friend/persistence/repository/plan_repository.dart';
 import 'package:help_me_j_friend/persistence/repository/position_repository.dart';
+import 'package:help_me_j_friend/persistence/repository/task_repository.dart';
 import 'package:help_me_j_friend/route/main_route.dart';
 import 'package:help_me_j_friend/route/plan_detail_route.dart';
 import 'package:help_me_j_friend/route/plan_update_route.dart';
@@ -18,8 +19,9 @@ class PlanFindRoute extends StatefulWidget {
 }
 
 class _PlanFindState extends State<PlanFindRoute> {
-  PlanRepository planRepository = PlanRepository();
-  PositionRepository positionRepository = PositionRepository();
+  var planRepository = PlanRepository();
+  var positionRepository = PositionRepository();
+  var taskRepository = TaskRepository();
 
   Future<List<Plan>> _fetchPlans() async {
     return planRepository.findAll();
@@ -85,12 +87,17 @@ class _PlanFindState extends State<PlanFindRoute> {
                                       var position = await positionRepository.findById(plan.accommodationPositionId);
 
                                       if (context.mounted) {
-                                        Navigator.push(context,
+                                        Navigator.pop(context);
+                                        var updatedPlan = await Navigator.push(context,
                                             MaterialPageRoute(builder: (_) =>
                                                 PlanUpdateRoute(
                                                     plan: newPlan,
                                                     position: position)
                                             ));
+
+                                        setState(() {
+                                          plan = updatedPlan;
+                                        });
                                       }
                                     },
                                   )),
@@ -98,11 +105,12 @@ class _PlanFindState extends State<PlanFindRoute> {
                                     leading: const Icon(Icons.delete),
                                     title: const Text("삭제"),
                                     onTap: () async {
-                                      final deleteCheck = await DialogFactory.showDeleteDialog(context, "정말로 삭제하시겠습니까?");
+                                      final deleteCheck = await DialogFactory.showDeleteDialog(context, "정말로 삭제하시겠습니까?", 1);
 
                                       if (deleteCheck!) {
                                         await planRepository.delete(plan);
                                         await positionRepository.delete(await positionRepository.findById(plan.accommodationPositionId));
+                                        await taskRepository.deleteAll(await taskRepository.findByPlanId(plan.id));
                                         setState(() {
                                           plans.remove(plan);
                                         });

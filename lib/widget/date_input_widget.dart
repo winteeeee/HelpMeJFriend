@@ -39,6 +39,7 @@ class _DateInputWidget extends State<DateInputWidget> {
             onPressed: () async {
             final DateTime? datetime = await showDatePicker(
                 context: context,
+                currentDate: widget.date,
                 firstDate: DateTime(widget.date.year),
                 lastDate: DateTime(widget.date.year + 10)
             );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:help_me_j_friend/provider/navigate_idx_provider.dart';
 import '../persistence/entity/plan.dart';
 import '../persistence/entity/position.dart';
 import 'package:help_me_j_friend/persistence/repository/plan_repository.dart';
@@ -92,7 +93,7 @@ class _PlanUpdateState extends State<PlanUpdateRoute> {
     );
 
     if (context.mounted) {
-      DialogFactory.showBackDialog(context, "일정이 생성되었습니다.");
+      DialogFactory.showAlertDialogWithIndex(context, "일정이 생성되었습니다.", 2, 1);
     }
   }
 
@@ -115,6 +116,11 @@ class _PlanUpdateState extends State<PlanUpdateRoute> {
           accommodationPositionId: widget.plan!.accommodationPositionId
       )
     );
+
+    if (context.mounted) {
+      var newPlan = await planRepository.findById(widget.plan!.id!);
+      DialogFactory.showAlertDialogWithData(context, "일정이 수정되었습니다.", newPlan, 2);
+    }
   }
 
   @override
@@ -185,7 +191,7 @@ class _PlanUpdateState extends State<PlanUpdateRoute> {
               height: screenHeight * 0.05,
               child: ElevatedButton(onPressed: () async {
                 if (planEndDate.isBefore(planStartDate)) {
-                  DialogFactory.showAlertDialog(context, "시작 날짜는 종료 날짜보다 앞에 있어야 합니다.");
+                  DialogFactory.showAlertDialog(context, "시작 날짜는 종료 날짜보다 앞에 있어야 합니다.", 1);
                 } else {
                   if (widget.plan == null) {
                     await insert(context);
