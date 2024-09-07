@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:help_me_j_friend/route/main_route.dart';
-import 'package:help_me_j_friend/route/plan_create_route.dart';
+import 'package:help_me_j_friend/route/plan_update_route.dart';
 import 'package:help_me_j_friend/route/plan_find_route.dart';
 
 class HomeRoute extends StatefulWidget {
@@ -14,7 +14,7 @@ class _HomeRouteState extends State<HomeRoute> {
   int index = 0;
   final List<Widget> widgetList = const [
     MainRoute(),
-    PlanCreateRoute(),
+    PlanUpdateRoute(),
     PlanFindRoute()
   ];
 

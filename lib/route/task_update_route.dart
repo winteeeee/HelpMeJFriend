@@ -122,13 +122,15 @@ class _TaskUpdateState extends State<TaskUpdateRoute> {
         )
     );
 
-    await taskRepository.update(Task(
-        id: widget.task!.id!,
-        name: taskName,
-        startTime: Utils.mergeDateAndTime(widget.task!.startTime, taskStartTime),
-        endTime: Utils.mergeDateAndTime(widget.task!.startTime, taskEndTime),
-        planId: widget.plan.id!,
-        positionId: widget.position!.id!)
+    await taskRepository.update(
+        Task(
+            id: widget.task!.id!,
+            name: taskName,
+            startTime: Utils.mergeDateAndTime(widget.task!.startTime, taskStartTime),
+            endTime: Utils.mergeDateAndTime(widget.task!.startTime, taskEndTime),
+            planId: widget.plan.id!,
+            positionId: widget.position!.id!
+        )
     );
 
     if (context.mounted) {
@@ -150,17 +152,17 @@ class _TaskUpdateState extends State<TaskUpdateRoute> {
             SizedBox(
               height: screenHeight * 0.1,
               child: ListTile(
-                title: Center(child: Text(widget.task == null ? "할 일 생성" : "할 일 수정", style: JFriendTextStyle.textBold24)),
-                leading: ElevatedButton(onPressed: () {
+                title: Center(child: Text(widget.task == null ? "[할 일 생성]" : "[할 일 수정]", style: JFriendTextStyle.textBold36)),
+                leading: Navigator.of(context).canPop() ? ElevatedButton(onPressed: () {
                   Navigator.pop(context);
                 }, style: JFriendButtonStyle.subElevatedButtonStyle,
-                    child: const Icon(Icons.arrow_back)),
+                    child: const Icon(Icons.arrow_back)) : const SizedBox.shrink(),
               ),
             ),
 
             //Body
             SizedBox(
-              height: screenHeight * 0.8,
+              height: screenHeight * 0.7,
               child: Column(
                 children: [
                   TextInputWidget(
