@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:help_me_j_friend/persistence/entity/entity.dart';
-import 'package:help_me_j_friend/util/utils.dart';
 
 class Task extends Entity {
   String name;

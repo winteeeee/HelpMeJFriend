@@ -29,6 +29,7 @@ class _PlanFindState extends State<PlanFindRoute> {
   var taskRepository = TaskRepository();
 
   Future<List<Plan>> _fetchPlans() async {
+    //TODO 날짜 순 정렬
     return planRepository.findAll();
   }
 

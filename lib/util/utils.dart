@@ -2,9 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:help_me_j_friend/persistence/entity/entity.dart';
-import 'package:help_me_j_friend/persistence/entity/plan.dart';
-import 'package:help_me_j_friend/persistence/entity/position.dart';
-import 'package:help_me_j_friend/persistence/entity/task.dart';
 
 class Utils {
   static String timeToString(TimeOfDay time) {

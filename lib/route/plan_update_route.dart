@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:help_me_j_friend/persistence/repository/task_repository.dart';
-import 'package:help_me_j_friend/provider/navigate_idx_provider.dart';
+import 'package:help_me_j_friend/route/home_route.dart';
 import 'package:help_me_j_friend/util/utils.dart';
-import 'package:provider/provider.dart';
 import '../persistence/entity/plan.dart';
 import '../persistence/entity/position.dart';
 import 'package:help_me_j_friend/persistence/repository/plan_repository.dart';
@@ -107,7 +106,7 @@ class _PlanUpdateState extends State<PlanUpdateRoute> {
     );
 
     if (context.mounted) {
-      DialogFactory.showAlertDialogWithIndex(context, "일정이 생성되었습니다.", 2, 1);
+      DialogFactory.showAlertDialogWithIndex(context, "일정이 생성되었습니다.", BottomWidget.planFindRoute.index, 1);
     }
   }
 
@@ -196,7 +195,7 @@ class _PlanUpdateState extends State<PlanUpdateRoute> {
                               ElevatedButton(
                                   onPressed: () => {
                                     insertByCode(),
-                                    DialogFactory.showAlertDialogWithIndex(context, "일정이 생성되었습니다.", 2, 1)
+                                    DialogFactory.showAlertDialogWithIndex(context, "일정이 생성되었습니다.", BottomWidget.planFindRoute.index, 1)
                                   },
                                   style: JFriendButtonStyle.subElevatedButtonStyle,
                                   child: const Text("확인")),
