@@ -39,22 +39,24 @@ class _PlanDetailState extends State<PlanDetailRoute> {
     List<FlutterWeekViewEvent> result = [];
     List<Task> tasks = await taskRepository.findByPlanId(widget.plan.id!);
     for (Task t in tasks) {
-      Position pos = await positionRepository.findById(t.positionId);
-      result.add(FlutterWeekViewEvent(
-          title: t.name,
-          description: pos.name,
-          start: t.startTime,
-          end: t.endTime,
-          onTap: () async {
-            //TODO 새로운 할 일이 정상적으로 리렌더링 되지 않음
-            Task newTask = await Navigator.push(context, MaterialPageRoute(builder: (_) => TaskDetailRoute(plan: widget.plan, task: t, position: pos)));
-            setState(() {
-              t = newTask;
-            });
-          })
-      );
+      result.add(await taskToEvent(t));
     }
     return result;
+  }
+
+  Future<FlutterWeekViewEvent> taskToEvent(t) async {
+    Position pos = await positionRepository.findById(t.positionId);
+    return FlutterWeekViewEvent(
+        title: t.name,
+        description: pos.name,
+        start: t.startTime,
+        end: t.endTime,
+        onTap: () async {
+          Task newTask = await Navigator.push(context, MaterialPageRoute(builder: (_) => TaskDetailRoute(plan: widget.plan, task: t, position: pos)));
+          setState(() {
+            t = newTask;
+          });
+        });
   }
 
   @override
@@ -108,8 +110,12 @@ class _PlanDetailState extends State<PlanDetailRoute> {
                             style: const WeekViewStyle(
                                 showHorizontalScrollbar: true
                             ),
-                            onBackgroundTappedDown: (date) {
-                              Navigator.push(context, MaterialPageRoute(builder: (_) => TaskUpdateRoute(plan: widget.plan, date: date)));
+                            onBackgroundTappedDown: (date) async {
+                              Task newTask = await Navigator.push(context, MaterialPageRoute(builder: (_) => TaskUpdateRoute(plan: widget.plan, date: date)));
+                              var newEvent = await taskToEvent(newTask);
+                              setState(() {
+                                events.add(newEvent);
+                              });
                             },
                           )
                       );

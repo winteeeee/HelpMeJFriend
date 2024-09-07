@@ -98,7 +98,7 @@ class _TaskUpdateState extends State<TaskUpdateRoute> {
         )
     );
 
-    await taskRepository.insert(Task(
+    int taskId = await taskRepository.insert(Task(
         name: taskName,
         startTime: Utils.mergeDateAndTime(widget.date!, taskStartTime),
         endTime: Utils.mergeDateAndTime(widget.date!, taskEndTime),
@@ -107,7 +107,8 @@ class _TaskUpdateState extends State<TaskUpdateRoute> {
     );
 
     if (context.mounted) {
-      DialogFactory.showAlertDialog(context, "할 일이 생성되었습니다.", 2);
+      var newTask = await taskRepository.findById(taskId);
+      DialogFactory.showAlertDialogWithData(context, "할 일이 생성되었습니다.", newTask, 2);
     }
   }
 
