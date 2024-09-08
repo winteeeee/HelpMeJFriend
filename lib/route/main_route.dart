@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_week_view/flutter_week_view.dart';
 import 'package:help_me_j_friend/persistence/repository/task_repository.dart';
 import 'package:help_me_j_friend/style/text_style.dart';
+import 'package:help_me_j_friend/util/utils.dart';
 
 import '../persistence/entity/task.dart';
 import '../widget/loading.dart';
@@ -18,14 +19,13 @@ class MainRoute extends StatelessWidget {
 
     Future<List<FlutterWeekViewEvent>> getEventArray(BuildContext context, DateTime date) async {
       List<FlutterWeekViewEvent> result = [];
-      List<Task> tasks = await taskRepository.findTodayTasks(date.toString().split(" ")[0]);
-      //TODO 여기도 OnTap 이벤트 추가
+      List<Task> tasks = await taskRepository.findTodayTasks(Utils.dateToString(date), Utils.dateToString(date.add(const Duration(days: 1))));
       for (Task t in tasks) {
         result.add(FlutterWeekViewEvent(
             title: t.name,
             description: "",
             start: t.startTime,
-            end: t.endTime
+            end: t.endTime,
         ));
       }
       return result;

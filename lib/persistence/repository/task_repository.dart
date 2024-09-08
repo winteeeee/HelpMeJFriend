@@ -33,14 +33,34 @@ class TaskRepository extends Repository<Task> {
     });
   }
 
-  Future<List<Task>> findTodayTasks(date) async {
+  Future<List<Task>> findTodayTasks(today, tomorrow) async {
     Database db = await database;
     List<Map<String, dynamic>> maps = await db.rawQuery("""
-      SELECT * FROM Task WHERE start_time <= $date <= end_time
+      SELECT * FROM Task WHERE '$today' <= start_time AND '$tomorrow' >= start_time
     """);
 
     return List.generate(maps.length, (index) {
       return Task.toEntity(maps[index]);
     });
+  }
+  
+  Future<bool> isDuplicated(startTime, endTime) async {
+    Database db = await database;
+    List<Map<String, dynamic>> maps = await db.rawQuery("""
+    SELECT *
+    FROM Task
+    WHERE ('$startTime' <= start_time AND end_time <= '$endTime')
+      OR ('$startTime' <= start_time AND start_time <= '$endTime')
+      OR ('$startTime' <= end_time AND end_time <= '$endTime')
+      OR (start_time <= '$startTime' AND '$endTime' <= end_time)
+    """);
+
+    for (Map<String, dynamic> m in maps) {
+      print(m);
+    }
+
+
+    return true;
+    //return maps.isNotEmpty;
   }
 }

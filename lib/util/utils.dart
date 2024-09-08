@@ -44,4 +44,8 @@ class Utils {
   static Map<String, dynamic> base64ToMap(String base64) {
     return jsonDecode(utf8.decode(base64Decode(base64)));
   }
+
+  static String dateToString(DateTime date) {
+    return date.toString().split(" ")[0];
+  }
 }

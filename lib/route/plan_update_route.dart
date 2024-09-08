@@ -262,8 +262,12 @@ class _PlanUpdateState extends State<PlanUpdateRoute> {
               height: screenHeight * 0.05,
               child: ElevatedButton(onPressed: () async {
                 if (planEndDate.isBefore(planStartDate)) {
-                  //TODO 날짜 겹치는지 여부도 확인
                   DialogFactory.showAlertDialog(context, "시작 날짜는 종료 날짜보다 앞에 있어야 합니다.", 1);
+                } else if (await planRepository.isDuplicated(Utils.dateToString(planStartDate), Utils.dateToString(planEndDate))) {
+                  if (context.mounted) {
+                    DialogFactory.showAlertDialog(
+                        context, "다른 일정과 겹치는 일정입니다.", 1);
+                  }
                 } else {
                   if (widget.plan == null) {
                     await insert(context);

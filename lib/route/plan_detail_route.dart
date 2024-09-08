@@ -111,11 +111,13 @@ class _PlanDetailState extends State<PlanDetailRoute> {
                                 showHorizontalScrollbar: true
                             ),
                             onBackgroundTappedDown: (date) async {
-                              Task newTask = await Navigator.push(context, MaterialPageRoute(builder: (_) => TaskUpdateRoute(plan: widget.plan, date: date)));
-                              var newEvent = await taskToEvent(newTask);
-                              setState(() {
-                                events.add(newEvent);
-                              });
+                              Task? newTask = await Navigator.push(context, MaterialPageRoute(builder: (_) => TaskUpdateRoute(plan: widget.plan, date: date)));
+                              if (newTask != null) {
+                                var newEvent = await taskToEvent(newTask);
+                                setState(() {
+                                  events.add(newEvent);
+                                });
+                              }
                             },
                           )
                       );

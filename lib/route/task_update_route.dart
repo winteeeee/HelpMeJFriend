@@ -46,8 +46,8 @@ class _TaskUpdateState extends State<TaskUpdateRoute> {
     pos = widget.position == null ? const LatLng(37.5666, 126.97819) : LatLng(widget.position!.latitude, widget.position!.longitude);
 
     taskName = widget.task == null ? "" : widget.task!.name;
-    taskStartTime = widget.task == null ? const TimeOfDay(hour: 0, minute: 0) : Utils.dateToTime(widget.task!.startTime);
-    taskEndTime = widget.task == null ? const TimeOfDay(hour: 0, minute: 0) : Utils.dateToTime(widget.task!.endTime);
+    taskStartTime = widget.task == null ? Utils.dateToTime(widget.date!) : Utils.dateToTime(widget.task!.startTime);
+    taskEndTime = widget.task == null ? Utils.dateToTime(widget.date!) : Utils.dateToTime(widget.task!.endTime);
   }
 
   void setTaskName(name) {
@@ -139,6 +139,17 @@ class _TaskUpdateState extends State<TaskUpdateRoute> {
     }
   }
 
+  String getDateString(TimeOfDay time) {
+    if (widget.date == null) {
+      DateTime startDate = widget.task!.startTime;
+      DateTime date = DateTime(startDate.year, startDate.month, startDate.day, time.hour, time.minute);
+      return date.toString();
+    } else {
+      DateTime date = widget.date!;
+      return DateTime(date.year, date.month, date.day, time.hour, time.minute).toString();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -207,6 +218,11 @@ class _TaskUpdateState extends State<TaskUpdateRoute> {
               child: ElevatedButton(onPressed: () async {
                 if (!timeCheck(taskStartTime, taskEndTime)) {
                   DialogFactory.showAlertDialog(context, "시작 시간은 종료 시간보다 앞에 있어야 합니다.", 1);
+                } else if (await taskRepository.isDuplicated(getDateString(taskStartTime), getDateString(taskEndTime))) {
+                  if (context.mounted) {
+                    DialogFactory.showAlertDialog(
+                        context, "다른 할 일과 겹치는 할 일입니다.", 1);
+                  }
                 } else {
                   if (widget.task == null) {
                     await insert(context);

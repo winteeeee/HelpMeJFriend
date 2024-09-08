@@ -51,12 +51,14 @@ class _TaskDetailState extends State<TaskDetailRoute> {
                     title: const Text("수정"),
                     onTap: () async {
                       Navigator.pop(context);
-                      Task newTask = await Navigator.push(context, MaterialPageRoute(builder: (_) => TaskUpdateRoute(plan: widget.plan, task: widget.task, position: widget.position)));
-                      setState(() {
-                        widget.task.name = newTask.name;
-                        widget.task.startTime = newTask.startTime;
-                        widget.task.endTime = newTask.endTime;
-                      });
+                      Task? newTask = await Navigator.push(context, MaterialPageRoute(builder: (_) => TaskUpdateRoute(plan: widget.plan, task: widget.task, position: widget.position)));
+                      if (newTask != null) {
+                        setState(() {
+                          widget.task.name = newTask.name;
+                          widget.task.startTime = newTask.startTime;
+                          widget.task.endTime = newTask.endTime;
+                        });
+                      }
                     }
                   )),
                   PopupMenuItem(child: ListTile(
@@ -71,6 +73,7 @@ class _TaskDetailState extends State<TaskDetailRoute> {
                         }
 
                         if (context.mounted) {
+                          Navigator.pop(context);
                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => PlanDetailRoute(plan: widget.plan)));
                         }
                       }

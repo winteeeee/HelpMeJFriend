@@ -1,4 +1,5 @@
 import 'package:help_me_j_friend/persistence/entity/entity.dart';
+import 'package:help_me_j_friend/util/utils.dart';
 
 class Plan extends Entity {
   String name;
@@ -19,8 +20,8 @@ class Plan extends Entity {
     return {
       'id': id,
       'name': name,
-      'start_date': startDate.toString().split(" ")[0],
-      'end_date': endDate.toString().split(" ")[0],
+      'start_date': Utils.dateToString(startDate),
+      'end_date': Utils.dateToString(endDate),
       'accommodation_position_id': accommodationPositionId,
     };
   }
