@@ -157,6 +157,7 @@ class _TaskUpdateState extends State<TaskUpdateRoute> {
 
     return MaterialApp(
       home: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.grey,
         body: Center(child: Column(
           children: [
@@ -206,7 +207,8 @@ class _TaskUpdateState extends State<TaskUpdateRoute> {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => PositionSelectRoute(
                         pos: pos,
                         setState: setPos)));
-                  }, child: const Text("위치 등록")),
+                  }, style: JFriendButtonStyle.subElevatedButtonStyle,
+                      child: const Text("위치 등록")),
                 ],
               ),
             ),
@@ -218,7 +220,7 @@ class _TaskUpdateState extends State<TaskUpdateRoute> {
               child: ElevatedButton(onPressed: () async {
                 if (!timeCheck(taskStartTime, taskEndTime)) {
                   DialogFactory.showAlertDialog(context, "시작 시간은 종료 시간보다 앞에 있어야 합니다.", 1);
-                } else if (await taskRepository.isDuplicated(getDateString(taskStartTime), getDateString(taskEndTime))) {
+                } else if (await taskRepository.isDuplicated(widget.task?.id, getDateString(taskStartTime), getDateString(taskEndTime))) {
                   if (context.mounted) {
                     DialogFactory.showAlertDialog(
                         context, "다른 할 일과 겹치는 할 일입니다.", 1);

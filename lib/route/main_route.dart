@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_week_view/flutter_week_view.dart';
 import 'package:help_me_j_friend/persistence/repository/task_repository.dart';
+import 'package:help_me_j_friend/route/position_find_route.dart';
 import 'package:help_me_j_friend/style/text_style.dart';
 import 'package:help_me_j_friend/util/utils.dart';
 
@@ -12,7 +13,6 @@ class MainRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //TODO 날짜를 클릭하면 구글맵과 연동
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     var taskRepository = TaskRepository();
@@ -48,7 +48,7 @@ class MainRoute extends StatelessWidget {
                 )
               ),
 
-              //Bdoy
+              //Body
               FutureBuilder(
                   future: getEventArray(context, DateTime.now()),
                   builder: (context, snapshot) {
@@ -71,10 +71,15 @@ class MainRoute extends StatelessWidget {
                       List<FlutterWeekViewEvent>? events = snapshot.data;
 
                       return SizedBox(
-                        height: screenHeight * 0.7,
+                        height: screenHeight * 0.65,
                         child: DayView(
+                          userZoomable: false,
                           date: DateTime.now(),
                           events: events!,
+                          onDayBarTappedDown: (date) async {
+                            List<Task> tasks = await taskRepository.findTodayTasks(Utils.dateToString(date), Utils.dateToString(date.add(const Duration(days: 1))));
+                            Navigator.push(context, MaterialPageRoute(builder: (_) => PositionFindRoute(tasks: tasks)));
+                          },
                         ),
                       );
                     }

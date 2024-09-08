@@ -39,6 +39,7 @@ class _PlanFindState extends State<PlanFindRoute> {
 
     return MaterialApp(
       home: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.grey,
         body: FutureBuilder(
             future: _fetchPlans(),

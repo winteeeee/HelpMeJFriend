@@ -34,6 +34,7 @@ class _TaskDetailState extends State<TaskDetailRoute> {
 
     return MaterialApp(
       home: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.grey,
         body: Center(child: Column(
           children: [

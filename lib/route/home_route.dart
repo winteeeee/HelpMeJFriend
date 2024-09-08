@@ -29,6 +29,7 @@ class _HomeRouteState extends State<HomeRoute> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.grey,
         body: SafeArea(child: widgetList[context.watch<IndexProvider>().index]),
         bottomNavigationBar: BottomNavigationBar(

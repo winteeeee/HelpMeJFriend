@@ -165,6 +165,7 @@ class _PlanUpdateState extends State<PlanUpdateRoute> {
 
     return MaterialApp(
       home: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.grey,
         body: Center(child: Column(
           children: [
@@ -227,14 +228,14 @@ class _PlanUpdateState extends State<PlanUpdateRoute> {
                       setState: setPlanName
                   ),
                   DateInputWidget(
-                      name: "일정 시작 날짜",
+                      name: "시작 날짜",
                       width: screenWidth * 0.8,
                       height: screenHeight * 0.1,
                       date: planStartDate,
                       setState: setPlanStartDate
                   ),
                   DateInputWidget(
-                      name: "일정 종료 날짜",
+                      name: "종료 날짜",
                       width: screenWidth * 0.8,
                       height: screenHeight * 0.1,
                       date: planEndDate,
@@ -263,7 +264,7 @@ class _PlanUpdateState extends State<PlanUpdateRoute> {
               child: ElevatedButton(onPressed: () async {
                 if (planEndDate.isBefore(planStartDate)) {
                   DialogFactory.showAlertDialog(context, "시작 날짜는 종료 날짜보다 앞에 있어야 합니다.", 1);
-                } else if (await planRepository.isDuplicated(Utils.dateToString(planStartDate), Utils.dateToString(planEndDate))) {
+                } else if (await planRepository.isDuplicated(widget.plan!.id, Utils.dateToString(planStartDate), Utils.dateToString(planEndDate))) {
                   if (context.mounted) {
                     DialogFactory.showAlertDialog(
                         context, "다른 일정과 겹치는 일정입니다.", 1);

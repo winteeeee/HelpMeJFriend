@@ -44,23 +44,30 @@ class TaskRepository extends Repository<Task> {
     });
   }
   
-  Future<bool> isDuplicated(startTime, endTime) async {
+  Future<bool> isDuplicated(int? id, startTime, endTime) async {
     Database db = await database;
-    List<Map<String, dynamic>> maps = await db.rawQuery("""
-    SELECT *
-    FROM Task
-    WHERE ('$startTime' <= start_time AND end_time <= '$endTime')
-      OR ('$startTime' <= start_time AND start_time <= '$endTime')
-      OR ('$startTime' <= end_time AND end_time <= '$endTime')
-      OR (start_time <= '$startTime' AND '$endTime' <= end_time)
-    """);
+    List<Map<String, dynamic>> maps;
 
-    for (Map<String, dynamic> m in maps) {
-      print(m);
+    if (id != null) {
+      maps = await db.rawQuery("""
+        SELECT *
+        FROM Task
+        WHERE id != $id AND (('$startTime' <= start_time AND end_time <= '$endTime')
+        OR ('$startTime' <= start_time AND start_time <= '$endTime')
+        OR ('$startTime' <= end_time AND end_time <= '$endTime')
+        OR (start_time <= '$startTime' AND '$endTime' <= end_time))
+      """);
+    } else {
+      maps = await db.rawQuery("""
+        SELECT *
+        FROM Task
+        WHERE ('$startTime' <= start_time AND end_time <= '$endTime')
+        OR ('$startTime' <= start_time AND start_time <= '$endTime')
+        OR ('$startTime' <= end_time AND end_time <= '$endTime')
+        OR (start_time <= '$startTime' AND '$endTime' <= end_time)
+      """);
     }
 
-
-    return true;
-    //return maps.isNotEmpty;
+    return maps.isNotEmpty;
   }
 }
