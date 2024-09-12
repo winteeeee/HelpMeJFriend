@@ -33,16 +33,28 @@ class PlanRepository extends Repository<Plan> {
     });
   }
 
-  Future<bool> isDuplicated(id, startDate, endDate) async {
+  Future<bool> isDuplicated(int? id, startDate, endDate) async {
     Database db = await database;
-    List<Map<String, dynamic>> maps = await db.rawQuery("""
-    SELECT *
-    FROM Plan
-    WHERE id != $id AND (('$startDate' <= start_date AND end_date <= '$endDate')
-      OR ('$startDate' <= start_date AND start_date <= '$endDate')
-      OR ('$startDate' <= end_date AND end_date <= '$endDate')
-      OR (start_date <= '$startDate' AND '$endDate' <= end_date))
+    List<Map<String, dynamic>> maps;
+    if (id != null) {
+      maps = await db.rawQuery("""
+        SELECT *
+        FROM Plan
+        WHERE id != $id AND (('$startDate' < start_date AND end_date < '$endDate')
+          OR ('$startDate' < start_date AND start_date < '$endDate')
+          OR ('$startDate' < end_date AND end_date < '$endDate')
+          OR (start_date < '$startDate' AND '$endDate' < end_date))
     """);
+    } else {
+      maps = await db.rawQuery("""
+        SELECT *
+        FROM Plan
+        WHERE ('$startDate' < start_date AND end_date < '$endDate')
+          OR ('$startDate' < start_date AND start_date < '$endDate')
+          OR ('$startDate' < end_date AND end_date < '$endDate')
+          OR (start_date < '$startDate' AND '$endDate' < end_date)
+    """);
+    }
 
     return maps.isNotEmpty;
   }

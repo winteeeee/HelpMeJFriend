@@ -4,10 +4,8 @@ import 'package:help_me_j_friend/persistence/entity/plan.dart';
 import 'package:help_me_j_friend/persistence/repository/plan_repository.dart';
 import 'package:help_me_j_friend/persistence/repository/position_repository.dart';
 import 'package:help_me_j_friend/persistence/repository/task_repository.dart';
-import 'package:help_me_j_friend/route/main_route.dart';
 import 'package:help_me_j_friend/route/plan_detail_route.dart';
 import 'package:help_me_j_friend/route/plan_update_route.dart';
-import 'package:help_me_j_friend/style/button_style.dart';
 import 'package:help_me_j_friend/style/text_style.dart';
 import 'package:help_me_j_friend/util/utils.dart';
 import 'package:help_me_j_friend/widget/dialog.dart';
@@ -54,11 +52,6 @@ class _PlanFindState extends State<PlanFindRoute> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text("일정을 가져오는 중 오류가 발생했습니다.\n${snapshot.error}", style: JFriendTextStyle.textBold24),
-                      SizedBox(height: screenHeight * 0.1),
-                      ElevatedButton(onPressed: () {
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const MainRoute()));
-                      }, style: JFriendButtonStyle.subElevatedButtonStyle,
-                          child: const Text("나가기"))
                     ],
                   ),
                 );

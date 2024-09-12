@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:help_me_j_friend/dto/taskUpdateDto.dart';
 import 'package:help_me_j_friend/persistence/entity/task.dart';
 import 'package:help_me_j_friend/persistence/repository/position_repository.dart';
 import 'package:help_me_j_friend/persistence/repository/task_repository.dart';
@@ -108,34 +109,35 @@ class _TaskUpdateState extends State<TaskUpdateRoute> {
 
     if (context.mounted) {
       var newTask = await taskRepository.findById(taskId);
-      DialogFactory.showAlertDialogWithData(context, "할 일이 생성되었습니다.", newTask, 2);
+      var newPosition = await positionRepository.findById(newTask.positionId);
+      var data = TaskUpdateDto(task: newTask, position: newPosition);
+      DialogFactory.showAlertDialogWithData(context, "할 일이 생성되었습니다.", data, 2);
     }
   }
 
   Future<void> update(context) async {
-    await positionRepository.update(
-        Position(
-            id: widget.position!.id!,
-            name: positionName,
-            latitude: pos.latitude,
-            longitude: pos.longitude
-        )
+    Position newPosition = Position(
+        id: widget.position!.id!,
+        name: positionName,
+        latitude: pos.latitude,
+        longitude: pos.longitude
     );
 
-    await taskRepository.update(
-        Task(
-            id: widget.task!.id!,
-            name: taskName,
-            startTime: Utils.mergeDateAndTime(widget.task!.startTime, taskStartTime),
-            endTime: Utils.mergeDateAndTime(widget.task!.startTime, taskEndTime),
-            planId: widget.plan.id!,
-            positionId: widget.position!.id!
-        )
+    Task newTask = Task(
+        id: widget.task!.id!,
+        name: taskName,
+        startTime: Utils.mergeDateAndTime(widget.task!.startTime, taskStartTime),
+        endTime: Utils.mergeDateAndTime(widget.task!.startTime, taskEndTime),
+        planId: widget.plan.id!,
+        positionId: widget.position!.id!
     );
+
+    await positionRepository.update(newPosition);
+    await taskRepository.update(newTask);
 
     if (context.mounted) {
-      var newTask = await taskRepository.findById(widget.task!.id!);
-      DialogFactory.showAlertDialogWithData(context, "할 일이 수정되었습니다.", newTask, 2);
+      var data = TaskUpdateDto(task: newTask, position: newPosition);
+      DialogFactory.showAlertDialogWithData(context, "할 일이 수정되었습니다.", data, 2);
     }
   }
 

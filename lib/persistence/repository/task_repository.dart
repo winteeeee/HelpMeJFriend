@@ -52,19 +52,19 @@ class TaskRepository extends Repository<Task> {
       maps = await db.rawQuery("""
         SELECT *
         FROM Task
-        WHERE id != $id AND (('$startTime' <= start_time AND end_time <= '$endTime')
-        OR ('$startTime' <= start_time AND start_time <= '$endTime')
-        OR ('$startTime' <= end_time AND end_time <= '$endTime')
-        OR (start_time <= '$startTime' AND '$endTime' <= end_time))
+        WHERE id != $id AND (('$startTime' < start_time AND end_time < '$endTime')
+        OR ('$startTime' < start_time AND start_time < '$endTime')
+        OR ('$startTime' < end_time AND end_time < '$endTime')
+        OR (start_time < '$startTime' AND '$endTime' < end_time))
       """);
     } else {
       maps = await db.rawQuery("""
         SELECT *
         FROM Task
-        WHERE ('$startTime' <= start_time AND end_time <= '$endTime')
-        OR ('$startTime' <= start_time AND start_time <= '$endTime')
-        OR ('$startTime' <= end_time AND end_time <= '$endTime')
-        OR (start_time <= '$startTime' AND '$endTime' <= end_time)
+        WHERE ('$startTime' < start_time AND end_time < '$endTime')
+        OR ('$startTime' < start_time AND start_time < '$endTime')
+        OR ('$startTime' < end_time AND end_time < '$endTime')
+        OR (start_time < '$startTime' AND '$endTime' < end_time)
       """);
     }
 

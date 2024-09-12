@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_week_view/flutter_week_view.dart';
+import 'package:help_me_j_friend/dto/taskUpdateDto.dart';
 import 'package:help_me_j_friend/persistence/repository/position_repository.dart';
 import 'package:help_me_j_friend/persistence/repository/task_repository.dart';
-import 'package:help_me_j_friend/route/position_find_route.dart';
 import 'package:help_me_j_friend/route/task_update_route.dart';
 import 'package:help_me_j_friend/route/task_detail_route.dart';
 import 'package:help_me_j_friend/style/text_style.dart';
@@ -52,9 +52,9 @@ class _PlanDetailState extends State<PlanDetailRoute> {
         start: t.startTime,
         end: t.endTime,
         onTap: () async {
-          Task newTask = await Navigator.push(context, MaterialPageRoute(builder: (_) => TaskDetailRoute(plan: widget.plan, task: t, position: pos)));
+          TaskUpdateDto taskUpdateDto = await Navigator.push(context, MaterialPageRoute(builder: (_) => TaskDetailRoute(plan: widget.plan, task: t, position: pos)));
           setState(() {
-            t = newTask;
+            t = taskUpdateDto.task;
           });
         });
   }
@@ -116,10 +116,6 @@ class _PlanDetailState extends State<PlanDetailRoute> {
                                   events.add(newEvent);
                                 });
                               }
-                            },
-                            onDayBarTappedDown: (date) async {
-                              List<Task> tasks = await taskRepository.findByPlanId(widget.plan.id);
-                              Navigator.push(context, MaterialPageRoute(builder: (_) => PositionFindRoute(tasks: tasks)));
                             },
                           )
                       );

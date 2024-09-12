@@ -8,7 +8,6 @@ class PositionSelectRoute extends StatefulWidget {
   final Function setState;
   const PositionSelectRoute({super.key, required this.pos, required this.setState});
 
-
   @override
   State<StatefulWidget> createState() => _PositionSelectRoute();
 }
@@ -37,11 +36,12 @@ class _PositionSelectRoute extends State<PositionSelectRoute> {
                 child: GoogleMap(
                   onMapCreated: _onMapCreated,
                   initialCameraPosition: CameraPosition(
-                      target: widget.pos, zoom: 11.0
+                      target: widget.pos, zoom: 18
                   ),
+                  myLocationEnabled: true,
                   onLongPress: (pos) => {
-                  DialogFactory.showAlertDialog(context, "위치가 선택되었습니다!", 2),
-                    widget.setState(pos),
+                    DialogFactory.showAlertDialog(context, "위치가 선택되었습니다!", 2),
+                      widget.setState(pos),
                   },
                 ),
               ),

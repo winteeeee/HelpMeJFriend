@@ -111,27 +111,25 @@ class _PlanUpdateState extends State<PlanUpdateRoute> {
   }
 
   Future<void> update(context) async {
-    await positionRepository.update(
-        Position(
-            id: widget.position!.id!,
-            name: positionName,
-            latitude: pos.latitude,
-            longitude: pos.longitude
-        )
+    Position newPosition = Position(
+        id: widget.position!.id!,
+        name: positionName,
+        latitude: pos.latitude,
+        longitude: pos.longitude
     );
 
-    await planRepository.update(
-      Plan(
-          id: widget.plan!.id!,
-          name: planName,
-          startDate: planStartDate,
-          endDate: planEndDate,
-          accommodationPositionId: widget.plan!.accommodationPositionId
-      )
+    Plan newPlan = Plan(
+        id: widget.plan!.id!,
+        name: planName,
+        startDate: planStartDate,
+        endDate: planEndDate,
+        accommodationPositionId: widget.plan!.accommodationPositionId
     );
+
+    await positionRepository.update(newPosition);
+    await planRepository.update(newPlan);
 
     if (context.mounted) {
-      var newPlan = await planRepository.findById(widget.plan!.id!);
       DialogFactory.showAlertDialogWithData(context, "일정이 수정되었습니다.", newPlan, 2);
     }
   }
@@ -264,7 +262,7 @@ class _PlanUpdateState extends State<PlanUpdateRoute> {
               child: ElevatedButton(onPressed: () async {
                 if (planEndDate.isBefore(planStartDate)) {
                   DialogFactory.showAlertDialog(context, "시작 날짜는 종료 날짜보다 앞에 있어야 합니다.", 1);
-                } else if (await planRepository.isDuplicated(widget.plan!.id, Utils.dateToString(planStartDate), Utils.dateToString(planEndDate))) {
+                } else if (await planRepository.isDuplicated(widget.plan?.id, Utils.dateToString(planStartDate), Utils.dateToString(planEndDate))) {
                   if (context.mounted) {
                     DialogFactory.showAlertDialog(
                         context, "다른 일정과 겹치는 일정입니다.", 1);
